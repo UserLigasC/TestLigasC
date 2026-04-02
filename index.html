@@ -2097,6 +2097,22 @@
         .then(()=>{ const sec=c.closest('.liga-section'); if(sec && sec.id!=='ranking-global') setTimeout(()=>generarClasificacion(sec.id),350); })
         .catch(e=>alert('❌ Error: '+e.message));
     }
+    function guardarFecha(id){
+      const c = document.getElementById(id);
+      if (!c) return;
+
+      const fechaInput = c.querySelector('.fecha-input');
+      const fecha = fechaInput ? fechaInput.value : '';
+
+      if (!fecha) {
+        alert("❌ Debes seleccionar una fecha para guardar.");
+        return;
+      }
+
+      database.ref('resultados/' + id + '/fecha').set(fecha)
+        .then(() => alert("✅ Fecha guardada correctamente"))
+        .catch(e => alert("❌ Error al guardar la fecha: " + e.message));
+    }
 // Clasificación dinámica (por ID de pareja en data-pairid)
     function generarClasificacion(ligaId) {
       // ELIMINADO EL BLOQUEO DE LIGA01 Y LIGA02 PARA QUE FUNCIONEN
