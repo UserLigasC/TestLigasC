@@ -69,7 +69,85 @@
   color: #27ae60;
   font-weight: 600;
 }
+/* --- CALENDARIO MODERNO (NUEVO DISEÑO) --- */
 
+#calendario-popup {
+  position: absolute;
+  background: #fff;
+  border-radius: 14px;
+  padding: 16px;
+  width: 260px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.18);
+  z-index: 99999;
+}
+
+#calendario-popup.oculto {
+  display: none;
+}
+
+.cal-nav-modern {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.cal-mes-modern {
+  color: #6c3cb0;
+}
+
+.cal-btn-modern {
+  background: #f0f0f0;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: 0.2s;
+  font-size: 16px;
+}
+.cal-btn-modern:hover {
+  background: #ddd;
+}
+
+.cal-semana-modern {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-weight: bold;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.cal-grid-modern {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.cal-dia-modern {
+  text-align: center;
+  padding: 8px 0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.cal-dia-modern:hover {
+  background: #ece3ff;
+}
+
+.cal-hoy-modern {
+  background: #6c3cb0 !important;
+  color: white !important;
+  font-weight: bold;
+}
+
+.cal-dia-inactivo-modern {
+  opacity: 0.2;
+}
 
 </style>
 </head>
@@ -3612,7 +3690,84 @@ document.addEventListener('DOMContentLoaded', () => {
 let calInputActual = null;
 let calFecha = new Date();
 function abrirCalendario(input){ calInputActual=input; const pop=document.getElementById('calendario-popup'); const r=input.getBoundingClientRect(); pop.style.top=(r.bottom+window.scrollY+5)+"px"; pop.style.left=(r.left+window.scrollX)+"px"; generarCalendario(); pop.classList.remove('oculto'); }
-function generarCalendario(){ const pop=document.getElementById('calendario-popup'); let m=calFecha.getMonth(); let y=calFecha.getFullYear(); const p1=new Date(y,m,1).getDay(); const last=new Date(y,m+1,0).getDate(); let html=`<div class="cal-nav"><button onclick="calPrevMes()">◀</button><span>${m+1}-${y}</span><button onclick="calNextMes()">▶</button></div><div class="cal-dias"><div>L</div><div>M</div><div>X</div><div>J</div><div>V</div><div>S</div><div>D</div>`; let off=(p1+6)%7; for(let i=0;i<off;i++) html+="<div></div>"; for(let d=1; d<=last; d++){ html+=`<div class="cal-dia" onclick="seleccionarDia(${d})">${d}</div>`;} html+="</div>"; pop.innerHTML=html; }
+function generarCalendario() {
+  const popup = document.getElementById('calendario-popup');
+  popup.innerHTML = ""; // limpiar calendario anterior
+
+  const año = calFecha.getFullYear();
+  const mes = calFecha.getMonth();
+
+  const mesesTxt = [
+    "Enero","Febrero","Marzo","Abril","Mayo","Junio",
+    "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"
+  ];
+
+  // --- CABECERA NUEVA ---
+  const nav = document.createElement("div");
+  nav.className = "cal-nav-modern";
+
+  nav.innerHTML = `
+      <button class="cal-btn-modern" onclick="calPrevMes()">❮</button>
+      <span class="cal-mes-modern">${mesesTxt[mes]} ${año}</span>
+      <button class="cal-btn-modern" onclick="calNextMes()">❯</button>
+  `;
+
+  popup.appendChild(nav);
+
+  // --- DÍAS DE LA SEMANA ---
+  const diasSemana = document.createElement("div");
+  diasSemana.className = "cal-semana-modern";
+  diasSemana.innerHTML = `
+      <span>L</span><span>M</span><span>X</span>
+      <span>J</span><span>V</span><span>S</span><span>D</span>
+  `;
+  popup.appendChild(diasSemana);
+
+  // --- GRID DE DÍAS ---
+  const grid = document.createElement("div");
+  grid.className = "cal-grid-modern";
+
+  const primerDia = new Date(año, mes, 1).getDay() || 7;
+  const diasMes = new Date(año, mes + 1, 0).getDate();
+
+  for (let i = 1; i < primerDia; i++) {
+    const empty = document.createElement("div");
+    empty.className = "cal-dia-inactivo-modern";
+    grid.appendChild(empty);
+  }
+
+  // --- DÍAS ---
+  const hoy = new Date();
+
+  for (let d = 1; d <= diasMes; d++) {
+    const dia = document.createElement("div");
+    dia.className = "cal-dia-modern";
+    dia.textContent = d;
+
+    // marcar HOY
+    if (
+      d === hoy.getDate() &&
+      mes === hoy.getMonth() &&
+      año === hoy.getFullYear()
+    ) {
+      dia.classList.add("cal-hoy-modern");
+    }
+
+    dia.onclick = () => {
+      let dd = String(d).padStart(2, "0");
+      let mm = String(mes + 1).padStart(2, "0");
+      calInputActual.value = `${dd}-${mm}-${año}`;
+      popup.classList.add("oculto");
+    };
+
+    grid.appendChild(dia);
+  }
+
+  popup.appendChild(grid);
+}
+
+
+
 function seleccionarDia(d){ let dd=String(d).padStart(2,'0'); let mm=String(calFecha.getMonth()+1).padStart(2,'0'); let y=calFecha.getFullYear(); if(calInputActual) calInputActual.value=`${dd}-${mm}-${y}`; document.getElementById('calendario-popup').classList.add('oculto'); }
 function calPrevMes(){ calFecha.setMonth(calFecha.getMonth()-1); generarCalendario(); }
 function calNextMes(){ calFecha.setMonth(calFecha.getMonth()+1); generarCalendario(); }
