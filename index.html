@@ -1,0 +1,2447 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LIGAS PADEL</title>
+  <link rel="icon" type="image/png" href="Gemini_Generated_Image_cuadrado.png">
+  <link rel="apple-touch-icon" href="Gemini_Generated_Image_cuadrado.png">
+  <meta name="apple-mobile-web-app-title" content="PadelSauros">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#27ae60">
+  <link rel="manifest" href="manifest.json">
+  <style>
+    :root { --primary:#27ae60; --dark:#2c3e50; --muted:#666; --card:#fff; }
+    *{box-sizing:border-box}
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial; background:#f4f4f4; margin:0; color:#222; display:flex; flex-direction:column; align-items:center; padding:0 16px 32px}
+    /* Header */
+    .site-header{width:100%; max-width:960px; margin:18px auto 12px; text-align:center}
+    .site-title{margin:8px 0 4px; font-size:clamp(24px,4.4vw,42px); color:var(--dark); letter-spacing:.3px}
+    .site-sub{margin:0 0 8px; color:var(--muted); font-size:14px}
+    .hero{border-radius:12px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,.12); background:#ddd}
+    .hero img{display:block; width:100%; height:auto}
+
+    .selector-ligas{margin:14px auto 20px; display:flex; flex-wrap:wrap; gap:10px; justify-content:center; width:100%; max-width:960px}
+    .btn-liga{padding:10px 20px; cursor:pointer; border:1px solid #ccc; background:#fff; font-weight:600; border-radius:6px}
+    .btn-liga.active{background:var(--primary); color:#fff; border-color:var(--primary)}
+
+    .liga-section{display:none; width:100%; max-width:900px}
+    .liga-section.active{display:block}
+
+    .jornada{background:var(--card); border:1px solid #e6e6e6; border-radius:10px; overflow:hidden; margin-bottom:20px; box-shadow:0 2px 5px rgba(0,0,0,.06)}
+    .fecha-header{cursor:pointer; background:var(--dark); color:#fff; padding:14px; font-weight:700; text-align:center}
+    .partidos-container{padding:16px 18px}
+
+    .partido{display:flex; flex-wrap:wrap; align-items:center; gap:15px; margin-bottom:18px; border-bottom:1px solid #eee; padding-bottom:12px}
+    .partido:last-child{border-bottom:none; padding-bottom:0; margin-bottom:0}
+
+    .marcador{display:flex; gap:6px; min-height:64px;}
+    .set{display:flex; flex-direction:column; gap:2px; align-items:center}
+    .set label{font-size:11px; color:#999}
+    input[type=number]{width:36px; height:28px; text-align:center; border:1px solid #ccc; border-radius:6px; font-size:.95em}
+
+    .nombres{display:flex; flex-direction:column; justify-content:space-betwee; height:60px; flex-grow:1; text-align:center}
+    .nombres span{font-weight:700; line-height:26px; font-size:.95em}
+    .vs{font-size:11px !important; color:#aaa !important; line-height:4px !important; font-weight:500 !important}
+
+    .btn-guardar{background:var(--primary); color:#fff; border:none; padding:10px 16px; border-radius:6px; cursor:pointer; font-weight:700; width:100%; margin-top:6px}
+    .ganador{ color: var(--primary) !important; }
+
+    .clasificacion-container{margin-top:18px}
+    .tabla-clasificacion{width:100%; border-collapse:collapse; background:var(--card); border-radius:10px; overflow:hidden; box-shadow:0 2px 5px rgba(0,0,0,.06)}
+    .tabla-clasificacion th,.tabla-clasificacion td{padding:10px 8px; text-align:center; border:1px solid #eee}
+    .tabla-clasificacion th:first-child,.tabla-clasificacion td:first-child{text-align:left; font-weight:800}
+    .tabla-clasificacion th{background:#f8f9fa; font-weight:800}
+    .tabla-clasificacion tr:nth-child(even){background:#fafafa}
+    .posicion{font-weight:800; color:var(--primary)}
+
+    h2.section-title{text-align:center; color:var(--dark); margin:18px 0 6px}
+  
+.calendario-popup { position: absolute; background: white; border: 1px solid #ccc; padding: 10px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 9999; }
+.calendario-popup.oculto { display: none; }
+.cal-nav { display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: bold; }
+.cal-dias { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.cal-dia { padding: 6px; text-align: center; cursor: pointer; border-radius: 4px; }
+.cal-dia:hover { background: #27ae60; color: white; }
+
+</style>
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="site-header" role="banner">
+    <div class="hero">
+      <img src="FONDOPADELC.png" alt="Pista de Padel" />
+    </div>
+    <h1 class="site-title">LIGAS PADEL</h1>
+    <p class="site-sub">Temporada 2026 · Ligas 01–08</p>
+  </header>
+
+  <!-- NAV -->
+  <div class="selector-ligas">
+    <button class="btn-liga" onclick="cambiarLiga('liga01', this)">N1 BLL</button>
+    <button class="btn-liga" onclick="cambiarLiga('liga02', this)">N1 BCN</button>
+    <button class="btn-liga active" onclick="cambiarLiga('liga03', this)">N2 BLL</button>
+    <button class="btn-liga" onclick="cambiarLiga('liga04', this)">N2A BCN</button>
+    <button class="btn-liga" onclick="cambiarLiga('liga05', this)">N2B BCN</button>
+    <button class="btn-liga" onclick="cambiarLiga('liga06', this)">N3 BLL</button>
+    <button class="btn-liga" onclick="cambiarLiga('liga07', this)">N3 BCN</button>
+    <button class="btn-liga" onclick="cambiarLiga('liga08', this)">N4 BCN</button>
+  </div>
+
+<!-- LIGA 01 -->
+<div id="liga01" class="liga-section">
+  <h2 class="section-title">Nivel 1 Baix Llobregat</h2>
+
+  <!-- J1 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L1-J1')">JORNADA 01 SEMANA 27/04/2026</div>
+    <div class="partidos-container" id="L1-J1" style="display:none;">
+      <div class="partido" id="L1-P1">    
+    <!-- FECHA DEL PARTIDO -->
+    <div class="fecha-partido">
+        <label>Fecha del partido:</label>
+        <input type="text" class="fecha-input" placeholder="dd-mm-aaaa" readonly onclick="abrirCalendario(this)">
+    </div>
+
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L1-PAR-01">N1 BLL Pareja 1 (R-T)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L1-PAR-02">N1 BLL Pareja 2 (M-S)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L1-P1')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L1-P2">    
+    <!-- FECHA DEL PARTIDO -->
+    <div class="fecha-partido">
+        <label>Fecha del partido:</label>
+        <input type="text" class="fecha-input" placeholder="dd-mm-aaaa" readonly onclick="abrirCalendario(this)">
+    </div>
+
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L1-PAR-03">N1 BLL Pareja 3 (C-M)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L1-PAR-04">N1 BLL Pareja 4 (L-F)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L1-P2')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- J2 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L1-J2')">JORNADA 02 SEMANA 04/05/2026</div>
+    <div class="partidos-container" id="L1-J2" style="display:none;">
+      <div class="partido" id="L1-P3">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L1-PAR-01">N1 BLL Pareja 1 (R-T)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L1-PAR-03">N1 BLL Pareja 3 (C-M)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L1-P3')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L1-P4">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L1-PAR-02">N1 BLL Pareja 2 (M-S)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L1-PAR-04">N1 BLL Pareja 4 (L-F)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L1-P4')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- J3 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L1-J3')">JORNADA 03 SEMANA 11/05/2026</div>
+    <div class="partidos-container" id="L1-J3" style="display:none;">
+      <div class="partido" id="L1-P5">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L1-PAR-01">N1 BLL Pareja 1 (R-T)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L1-PAR-04">N1 BLL Pareja 4 (L-F)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L1-P5')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L1-P6">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L1-PAR-02">N1 BLL Pareja 2 (M-S)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L1-PAR-03">N1 BLL Pareja 3 (C-M)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L1-P6')">Guardar</button>
+      </div>
+    </div>
+  </div>
+  
+<!-- JORNADA DESCANSO / INFORMACIÓN -->
+<div class="jornada" style="background:#fafafa;">
+  <div class="fecha-header"
+       style="background:#ffffff; color:#2c3e50; border:1px solid #e6e6e6; cursor:default;">
+      JORNADA DE DESCANSO – RECUPERACIÓN DE PARTIDOS PENDIENTES
+  </div>
+</div>
+
+  <!-- J4 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L1-J4')">JORNADA 04 SEMANA 25/05/2026</div>
+    <div class="partidos-container" id="L1-J4" style="display:none;">
+      <div class="partido" id="L1-P7">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L1-PAR-01">N1 BLL Pareja 1 (R-T)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L1-PAR-02">N1 BLL Pareja 2 (M-S)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L1-P7')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L1-P8">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L1-PAR-03">N1 BLL Pareja 3 (C-M)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L1-PAR-04">N1 BLL Pareja 4 (L-F)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L1-P8')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- J5 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L1-J5')">JORNADA 05 SEMANA 01/06/2026</div>
+    <div class="partidos-container" id="L1-J5" style="display:none;">
+      <div class="partido" id="L1-P9">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L1-PAR-01">MIGUEL y HUGO</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L1-PAR-03">N1 BLL Pareja 3 (C-M)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L1-P9')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L1-P10">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L1-PAR-02">N1 BLL Pareja 2 (M-S)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L1-PAR-04">N1 BLL Pareja 4 (L-F)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L1-P10')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- J6 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L1-J6')">JORNADA 06 SEMANA 08/06/2026</div>
+    <div class="partidos-container" id="L1-J6" style="display:none;">
+      <div class="partido" id="L1-P11">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L1-PAR-01">N1 BLL Pareja 1 (R-T)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L1-PAR-04">N1 BLL Pareja 4 (L-F)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L1-P11')">Guardar</button>
+        </div>
+      
+      <div class="partido" id="L1-P12">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L1-PAR-02">N1 BLL Pareja 2 (M-S)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L1-PAR-03">N1 BLL Pareja 3 (C-M)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L1-P12')">Guardar</button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="clasificacion-container">
+    <h3 style="text-align:center; color:#2c3e50; margin-bottom:10px">Tabla de Clasificación</h3>
+    <table class="tabla-clasificacion">
+      <thead>
+        <tr style="background:#e74c3c; color:black">
+          <th>Pos</th><th>Pareja</th><th>PJ</th><th>PG</th><th>PE</th><th>PP</th><th>Puntos</th>
+        </tr>
+      </thead>
+      <tbody id="cuerpo-tabla-liga01"></tbody>
+    </table>
+    <p style="text-align:center; margin-top:12px">
+      <button onclick="generarClasificacion('liga01')" class="btn-guardar" style="width:auto; background:#3498db">Recalcular Clasificación</button>
+    </p>
+  </div>
+</div>
+
+ <!-- LIGA 02  -->
+<div id="liga02" class="liga-section">
+  <h2 class="section-title">Nivel 1 Barcelonès</h2>
+
+  <!-- J1 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L2-J1')">JORNADA 01 SEMANA 27/04/2026</div>
+    <div class="partidos-container" id="L2-J1" style="display:none;">
+      <div class="partido" id="L2-P1">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L2-PAR-01">N1 BCN Pareja 1 (J-R)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L2-PAR-02">N1 BCN Pareja 2 (R-T)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L2-P1')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L2-P2">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L2-PAR-03">N1 BCN Pareja 3 (E-J)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L2-PAR-04">N1 BCN Pareja 4 (J-Y)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L2-P2')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- J2 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L2-J2')">JORNADA 02 SEMANA 04/05/2026</div>
+    <div class="partidos-container" id="L2-J2" style="display:none;">
+      <div class="partido" id="L2-P3">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L2-PAR-01">N1 BCN Pareja 1 (J-R)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L2-PAR-03">N1 BCN Pareja 3 (E-J)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L2-P3')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L2-P4">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L2-PAR-02">N1 BCN Pareja 2 (R-T)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L2-PAR-04">N1 BCN Pareja 4 (J-Y)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L2-P4')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- J3 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L2-J3')">JORNADA 03 SEMANA 11/05/2026</div>
+    <div class="partidos-container" id="L2-J3" style="display:none;">
+      <div class="partido" id="L2-P5">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L2-PAR-01">N1 BCN Pareja 1 (J-R)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L2-PAR-04">N1 BCN Pareja 4 (J-Y)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L2-P5')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L2-P6">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L2-PAR-02">N1 BCN Pareja 2 (R-T)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L2-PAR-03">N1 BCN Pareja 3 (E-J)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L2-P6')">Guardar</button>
+      </div>
+    </div>
+  </div>
+  <!-- JORNADA DESCANSO / INFORMACIÓN -->
+  <div class="jornada" style="background:#fafafa;">
+    <div class="fecha-header"
+       style="background:#ffffff; color:#2c3e50; border:1px solid #e6e6e6; cursor:default;">
+      JORNADA DE DESCANSO – RECUPERACIÓN DE PARTIDOS PENDIENTES
+   </div>
+  </div>
+
+  <!-- J4 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L2-J4')">JORNADA 04 SEMANA 25/05/2026</div>
+    <div class="partidos-container" id="L2-J4" style="display:none;">
+      <div class="partido" id="L2-P7">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L2-PAR-01">N1 BCN Pareja 1 (J-R)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L2-PAR-02">N1 BCN Pareja 2 (R-T)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L2-P7')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L2-P8">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L2-PAR-03">N1 BCN Pareja 3 (E-J)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L2-PAR-04">N1 BCN Pareja 4 (J-Y)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L2-P8')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- J5 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L2-J5')">JORNADA 05 SEMANA 01/06/2026</div>
+    <div class="partidos-container" id="L2-J5" style="display:none;">
+      <div class="partido" id="L2-P9">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L2-PAR-01">N1 BCN Pareja 1 (J-R)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L2-PAR-03">N1 BCN Pareja 3 (E-J)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L2-P9')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L2-P10">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L2-PAR-02">N1 BCN Pareja 2 (R-T)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L2-PAR-04">N1 BCN Pareja 4 (J-Y)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L2-P10')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- J6 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L2-J6')">JORNADA 06 SEMANA 08/06/2026</div>
+    <div class="partidos-container" id="L2-J6" style="display:none;">
+      <div class="partido" id="L2-P11">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L2-PAR-01">N1 BCN Pareja 1 (J-R)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L2-PAR-04">N1 BCN Pareja 4 (J-Y)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L2-P11')">Guardar</button>
+        </div>
+      
+      <div class="partido" id="L2-P12">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L2-PAR-02">N1 BCN Pareja 2 (V-B)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L2-PAR-03">N1 BCN Pareja 3 (J-S)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L2-P12')">Guardar</button>
+      </div>
+    </div>
+  </div>
+    
+  <div class="clasificacion-container">
+    <h3 style="text-align:center; color:#2c3e50; margin-bottom:10px">Tabla de Clasificación</h3>
+    <table class="tabla-clasificacion">
+      <thead>
+        <tr style="background:#e74c3c; color:black">
+          <th>Pos</th><th>Pareja</th><th>PJ</th><th>PG</th><th>PE</th><th>PP</th><th>Puntos</th>
+        </tr>
+      </thead>
+      <tbody id="cuerpo-tabla-liga02"></tbody>
+    </table>
+    <p style="text-align:center; margin-top:12px">
+      <button onclick="generarClasificacion('liga02')" class="btn-guardar" style="width:auto; background:#3498db">Recalcular Clasificación</button>
+    </p>
+  </div>
+</div>
+  <!-- LIGA 03 -->
+  <div id="liga03" class="liga-section active">
+    <h2 class="section-title">Nivel 2 Baix Llobregat</h2>
+
+  <!-- J1 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L3-J1')">JORNADA 01 SEMANA 27/04/2026</div>
+    <div class="partidos-container" id="L3-J1" style="display:none;">
+      <div class="partido" id="L3-P1">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L3-PAR-01">N2 BLL Pareja 1 (J-J)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L3-PAR-02">N2 BLL Pareja 2 (M-M)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L3-P1')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L3-P2">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L3-PAR-03">N2 BLL Pareja 3 (S-D)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L3-PAR-04">N2 BLL Pareja 4 (J-C)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L3-P2')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- J2 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L3-J2')">JORNADA 02 SEMANA 04/05/2026</div>
+    <div class="partidos-container" id="L3-J2" style="display:none;">
+      <div class="partido" id="L3-P3">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L3-PAR-01">N2 BLL Pareja 1 (J-J)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L3-PAR-03">N2 BLL Pareja 3 (S-D)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L3-P3')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L3-P4">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L3-PAR-02">N2 BLL Pareja 2 (M-M)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L3-PAR-04">N2 BLL Pareja 4 (J-C)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L3-P4')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- J3 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L3-J3')">JORNADA 03 SEMANA 11/05/2026</div>
+    <div class="partidos-container" id="L3-J3" style="display:none;">
+      <div class="partido" id="L3-P5">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L3-PAR-01">N2 BLL Pareja 1 (J-J)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L3-PAR-04">N2 BLL Pareja 4 (J-C)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L3-P5')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L3-P6">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L3-PAR-02">N2 BLL Pareja 2 (M-M)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L3-PAR-03">N2 BLL Pareja 3 (S-D)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L3-P6')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JORNADA DESCANSO / INFORMACIÓN -->
+  <div class="jornada" style="background:#fafafa;">
+    <div class="fecha-header"
+       style="background:#ffffff; color:#2c3e50; border:1px solid #e6e6e6; cursor:default;">
+      JORNADA DE DESCANSO – RECUPERACIÓN DE PARTIDOS PENDIENTES
+   </div>
+  </div>
+
+  <!-- J4 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L3-J4')">JORNADA 04 SEMANA 25/05/2026</div>
+    <div class="partidos-container" id="L3-J4" style="display:none;">
+      <div class="partido" id="L3-P7">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L3-PAR-01">N2 BLL Pareja 1 (J-J)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L3-PAR-02">N2 BLL Pareja 2 (M-M)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L3-P7')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L3-P8">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L3-PAR-03">N2 BLL Pareja 3 (S-D)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L3-PAR-04">N2 BLL Pareja 4 (J-C)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L3-P8')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- J5 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L3-J5')">JORNADA 05 SEMANA 01/06/2026</div>
+    <div class="partidos-container" id="L3-J5" style="display:none;">
+      <div class="partido" id="L3-P9">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L3-PAR-01">N2 BLL Pareja 1 (J-J)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L3-PAR-03">N2 BLL Pareja 3 (S-D)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L3-P9')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L3-P10">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L3-PAR-02">N2 BLL Pareja 2 (M-M)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L3-PAR-04">N2 BLL Pareja 4 (J-C)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L3-P10')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- J6 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L3-J6')">JORNADA 06 SEMANA 08/06/2026</div>
+    <div class="partidos-container" id="L3-J6" style="display:none;">
+      <div class="partido" id="L3-P11">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L3-PAR-01">N2 BLL Pareja 1 (J-J)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L3-PAR-04">N2 BLL Pareja 4 (J-C)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L3-P11')">Guardar</button>
+        </div>
+      </div>
+    </div>
+    <div class="clasificacion-container">
+      <h3 style="text-align:center; color:#2c3e50; margin-bottom:10px">Tabla de Clasificación</h3>
+      <table class="tabla-clasificacion">
+        <thead>
+          <tr style="background:#e74c3c; color:black"><th>Pos</th><th>Pareja</th><th>PJ</th><th>PG</th><th>PE</th><th>PP</th><th>Puntos</th></tr>
+        </thead>
+        <tbody id="cuerpo-tabla-liga03"></tbody>
+      </table>
+      <p style="text-align:center; margin-top:12px"><button onclick="generarClasificacion('liga03')" class="btn-guardar" style="width:auto; background:#3498db">Recalcular Clasificación</button></p>
+    </div>
+  </div>
+
+  <!-- LIGA 04 -->
+  <div id="liga04" class="liga-section">
+    <h2 class="section-title">Nivel 2A Barcelonès</h2>
+
+  <!-- J1 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L4-J1')">JORNADA 01 SEMANA 27/04/2026</div>
+    <div class="partidos-container" id="L4-J1" style="display:none;">
+      <div class="partido" id="L4-P1">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L4-PAR-01">N2A BCN Pareja 1 (A-M)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L4-PAR-02">N2A BCN Pareja 2 (V-B)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L4-P1')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L4-P2">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L4-PAR-03">N2A BCN Pareja 3 (J-S)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L4-PAR-04">N2A BCN Pareja 4 (J-J)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L4-P2')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- J2 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L4-J2')">JORNADA 02 SEMANA 04/05/2026</div>
+    <div class="partidos-container" id="L4-J2" style="display:none;">
+      <div class="partido" id="L4-P3">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L4-PAR-01">N2A BCN Pareja 1 (A-M)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L4-PAR-03">N2A BCN Pareja 3 (J-S)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L4-P3')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L4-P4">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L4-PAR-02">N2A BCN Pareja 2 (V-B)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L4-PAR-04">N2A BCN Pareja 4 (J-J)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L4-P4')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- J3 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L4-J3')">JORNADA 03 SEMANA 11/05/2026</div>
+    <div class="partidos-container" id="L4-J3" style="display:none;">
+      <div class="partido" id="L4-P5">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L4-PAR-01">N2A BCN Pareja 1 (A-M)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L4-PAR-04">N2A BCN Pareja 4 (J-J)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L4-P5')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L4-P6">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L4-PAR-02">N2A BCN Pareja 2 (V-B)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L4-PAR-03">N2A BCN Pareja 3 (J-S)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L4-P6')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JORNADA DESCANSO / INFORMACIÓN -->
+  <div class="jornada" style="background:#fafafa;">
+    <div class="fecha-header"
+       style="background:#ffffff; color:#2c3e50; border:1px solid #e6e6e6; cursor:default;">
+      JORNADA DE DESCANSO – RECUPERACIÓN DE PARTIDOS PENDIENTES
+   </div>
+  </div>
+
+  <!-- J4 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L4-J4')">JORNADA 04 SEMANA 25/05/2026</div>
+    <div class="partidos-container" id="L4-J4" style="display:none;">
+      <div class="partido" id="L4-P7">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L4-PAR-01">N2A BCN Pareja 1 (A-M)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L4-PAR-02">N2A BCN Pareja 2 (V-B)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L4-P7')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L4-P8">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L4-PAR-03">N2A BCN Pareja 3 (J-S)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L4-PAR-04">N2A BCN Pareja 4 (J-J)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L4-P8')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- J5 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L4-J5')">JORNADA 05 SEMANA 01/06/2026</div>
+    <div class="partidos-container" id="L4-J5" style="display:none;">
+      <div class="partido" id="L4-P9">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L4-PAR-01">N2A BCN Pareja 1 (A-M)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L4-PAR-03">N2A BCN Pareja 3 (J-S)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L4-P9')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L4-P10">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L4-PAR-02">N2A BCN Pareja 2 (V-B)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L4-PAR-04">N2A BCN Pareja 4 (J-J)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L4-P10')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- J6 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L4-J6')">JORNADA 06 SEMANA 08/06/2026</div>
+    <div class="partidos-container" id="L4-J6" style="display:none;">
+      <div class="partido" id="L4-P11">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L4-PAR-01">N2A BCN Pareja 1 (A-M)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L4-PAR-04">N2A BCN Pareja 4 (J-J)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L4-P11')">Guardar</button>
+        </div>
+      <div class="partido" id="L4-P12">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div> 
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L4-PAR-02">N2A BCN Pareja 2 (V-B)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L4-PAR-03">N2A BCN Pareja 3 (J-S)</span> 
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L4-P12')">Guardar</button>
+      </div>
+    </div>
+  </div>
+    <div class="clasificacion-container">
+      <h3 style="text-align:center; color:#2c3e50; margin-bottom:10px">Tabla de Clasificación</h3>
+      <table class="tabla-clasificacion"><thead><tr style="background:#e74c3c; color:black"><th>Pos</th><th>Pareja</th><th>PJ</th><th>PG</th><th>PE</th><th>PP</th><th>Puntos</th></tr></thead><tbody id="cuerpo-tabla-liga04"></tbody></table>
+      <p style="text-align:center; margin-top:12px"><button onclick="generarClasificacion('liga04')" class="btn-guardar" style="width:auto; background:#3498db">Recalcular Clasificación</button></p>
+    </div>
+  </div>
+
+  <!-- LIGA 05 -->
+  <div id="liga05" class="liga-section">
+    <h2 class="section-title">Nivel 2B Barcelonès</h2>
+
+  <!-- J1 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L5-J1')">JORNADA 01 SEMANA 27/04/2026</div>
+    <div class="partidos-container" id="L5-J1" style="display:none;">
+      <div class="partido" id="L5-P1">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L5-PAR-01">N2B BCN Pareja 1 (F-A)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L5-PAR-02">N2B BCN Pareja 2 (M-C)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L5-P1')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L5-P2">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L5-PAR-03">N2B BCN Pareja 3 (A-L)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L5-PAR-04">N2B BCN Pareja 4 (S-E)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L5-P2')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- J2 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L5-J2')">JORNADA 02 SEMANA 04/05/2026</div>
+    <div class="partidos-container" id="L5-J2" style="display:none;">
+      <div class="partido" id="L5-P3">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L5-PAR-01">N2B BCN Pareja 1 (F-A)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L5-PAR-03">N2B BCN Pareja 3 (A-L)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L5-P3')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L5-P4">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L5-PAR-02">N2B BCN Pareja 2 (M-C)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L5-PAR-04">N2B BCN Pareja 4 (S-E)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L5-P4')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- J3 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L5-J3')">JORNADA 03 SEMANA 11/05/2026</div>
+    <div class="partidos-container" id="L5-J3" style="display:none;">
+      <div class="partido" id="L5-P5">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L5-PAR-01">N2B BCN Pareja 1 (F-A)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L5-PAR-04">N2B BCN Pareja 4 (S-E)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L5-P5')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L5-P6">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L5-PAR-02">N2B BCN Pareja 2 (M-C)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L5-PAR-03">N2B BCN Pareja 3 (A-L)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L5-P6')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JORNADA DESCANSO / INFORMACIÓN -->
+  <div class="jornada" style="background:#fafafa;">
+   <div class="fecha-header"
+       style="background:#ffffff; color:#2c3e50; border:1px solid #e6e6e6; cursor:default;">
+      JORNADA DE DESCANSO – RECUPERACIÓN DE PARTIDOS PENDIENTES
+   </div>
+  </div>
+
+  <!-- J4 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L5-J4')">JORNADA 04 SEMANA 25/05/2026</div>
+    <div class="partidos-container" id="L5-J4" style="display:none;">
+      <div class="partido" id="L5-P7">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L5-PAR-01">N2B BCN Pareja 1 (F-A)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L5-PAR-02">N2B BCN Pareja 2 (M-C)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L5-P7')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L5-P8">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L5-PAR-03">N2B BCN Pareja 3 (A-L)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L5-PAR-04">N2B BCN Pareja 4 (S-E)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L5-P8')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- J5 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L5-J5')">JORNADA 05 SEMANA 01/06/2026</div>
+    <div class="partidos-container" id="L5-J5" style="display:none;">
+      <div class="partido" id="L5-P9">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L5-PAR-01">N2B BCN Pareja 1 (F-A)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L5-PAR-03">N2B BCN Pareja 3 (A-L)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L5-P9')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L5-P10">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L5-PAR-02">N2B BCN Pareja 2 (M-C)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L5-PAR-04">N2B BCN Pareja 4 (S-E)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L5-P10')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- J6 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L5-J6')">JORNADA 06 SEMANA 08/06/2026</div>
+    <div class="partidos-container" id="L5-J6" style="display:none;">
+      <div class="partido" id="L5-P11">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L5-PAR-01">N2B BCN Pareja 1 (F-A)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L5-PAR-04">N2B BCN Pareja 4 (S-E)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L5-P11')">Guardar</button>
+        </div>
+      <div class="partido" id="L5-P12">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div> 
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L5-PAR-02">N2B BCN Pareja 2 (M-C)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L5-PAR-03">N2B BCN Pareja 3 (A-L)</span> 
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L5-P12')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+    <div class="clasificacion-container"><h3 style="text-align:center; color:#2c3e50; margin-bottom:10px">Tabla de Clasificación</h3><table class="tabla-clasificacion"><thead><tr style="background:#e74c3c; color:black"><th>Pos</th><th>Pareja</th><th>PJ</th><th>PG</th><th>PE</th><th>PP</th><th>Puntos</th></tr></thead><tbody id="cuerpo-tabla-liga05"></tbody></table><p style="text-align:center; margin-top:12px"><button onclick="generarClasificacion('liga05')" class="btn-guardar" style="width:auto; background:#3498db">Recalcular Clasificación</button></p></div>
+  </div>
+
+  <!-- LIGA 06 -->
+  <div id="liga06" class="liga-section">
+    <h2 class="section-title">Nivel 3 Baix Llobregat</h2>
+
+  <!-- J1 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L6-J1')">JORNADA 01 SEMANA 27/04/2026</div>
+    <div class="partidos-container" id="L6-J1" style="display:none;">
+      <div class="partido" id="L6-P1">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L6-PAR-01">N3 BLL Pareja 1 (M-A)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L6-PAR-02">N3 BLL Pareja 2 (J-P)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L6-P1')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L6-P2">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L6-PAR-03">N3 BLL Pareja 3 (D-F)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L6-PAR-04">N3 BLL Pareja 4 (R-M)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L6-P2')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- J2 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L6-J2')">JORNADA 02 SEMANA 04/05/2026</div>
+    <div class="partidos-container" id="L6-J2" style="display:none;">
+      <div class="partido" id="L6-P3">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L6-PAR-01">N3 BLL Pareja 1 (M-A)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L6-PAR-03">N3 BLL Pareja 3 (D-F)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L6-P3')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L6-P4">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L6-PAR-02">N3 BLL Pareja 2 (J-P)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L6-PAR-04">N3 BLL Pareja 4 (R-M)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L6-P4')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- J3 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L6-J3')">JORNADA 03 SEMANA 11/05/2026</div>
+    <div class="partidos-container" id="L6-J3" style="display:none;">
+      <div class="partido" id="L6-P5">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L6-PAR-01">N3 BLL Pareja 1 (M-A)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L6-PAR-04">N3 BLL Pareja 4 (R-M)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L6-P5')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L6-P6">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L6-PAR-02">N3 BLL Pareja 2 (J-P)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L6-PAR-03">N3 BLL Pareja 3 (D-F)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L6-P6')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JORNADA DESCANSO / INFORMACIÓN -->
+  <div class="jornada" style="background:#fafafa;">
+    <div class="fecha-header"
+       style="background:#ffffff; color:#2c3e50; border:1px solid #e6e6e6; cursor:default;">
+      JORNADA DE DESCANSO – RECUPERACIÓN DE PARTIDOS PENDIENTES
+   </div>
+  </div>
+
+  <!-- J4 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L6-J4')">JORNADA 04 SEMANA 25/05/2026</div>
+    <div class="partidos-container" id="L6-J4" style="display:none;">
+      <div class="partido" id="L6-P7">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L6-PAR-01">N3 BLL Pareja 1 (M-A)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L6-PAR-02">N3 BLL Pareja 2 (J-P)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L6-P7')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L6-P8">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L6-PAR-03">N3 BLL Pareja 3 (D-F)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L6-PAR-04">N3 BLL Pareja 4 (R-M)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L6-P8')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- J5 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L6-J5')">JORNADA 05 SEMANA 01/06/2026</div>
+    <div class="partidos-container" id="L6-J5" style="display:none;">
+      <div class="partido" id="L6-P9">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L6-PAR-01">N3 BLL Pareja 1 (M-A)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L6-PAR-03">N3 BLL Pareja 3 (D-F)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L6-P9')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L6-P10">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L6-PAR-02">N3 BLL Pareja 2 (J-P)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L6-PAR-04">N3 BLL Pareja 4 (R-M)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L6-P10')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- J6 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L6-J6')">JORNADA 06 SEMANA 08/06/2026</div>
+    <div class="partidos-container" id="L6-J6" style="display:none;">
+      <div class="partido" id="L6-P11">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L6-PAR-01">N3 BLL Pareja 1 (M-A)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L6-PAR-04">N3 BLL Pareja 4 (R-M)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L6-P11')">Guardar</button>
+        </div>
+      <div class="partido" id="L6-P12">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div> 
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L6-PAR-02">N3 BLL Pareja 2 (J-P)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L6-PAR-03">N3 BLL Pareja 3 (D-F)</span> 
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L6-P12')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+    <div class="clasificacion-container"><h3 style="text-align:center; color:#2c3e50; margin-bottom:10px">Tabla de Clasificación</h3><table class="tabla-clasificacion"><thead><tr style="background:#e74c3c; color:black"><th>Pos</th><th>Pareja</th><th>PJ</th><th>PG</th><th>PE</th><th>PP</th><th>Puntos</th></tr></thead><tbody id="cuerpo-tabla-liga06"></tbody></table><p style="text-align:center; margin-top:12px"><button onclick="generarClasificacion('liga06')" class="btn-guardar" style="width:auto; background:#3498db">Recalcular Clasificación</button></p></div>
+  </div>
+  <!-- LIGA 07 -->
+  <div id="liga07" class="liga-section">
+    <h2 class="section-title">Nivel 3 Barcelonès</h2>
+
+  <!-- J1 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L7-J1')">JORNADA 01 SEMANA 27/04/2026</div>
+    <div class="partidos-container" id="L7-J1" style="display:none;">
+      <div class="partido" id="L7-P1">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L7-PAR-01">N3 BCN Pareja 1 (A-J)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L7-PAR-02">N3 BCN Pareja 2 (J-S)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L7-P1')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L7-P2">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L7-PAR-03">N3 BCN Pareja 3 (J-C)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L7-PAR-04">N3 BCN Pareja 4 (E-J)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L7-P2')">Guardar</button>
+      </div>
+      
+      <!-- DESCANSO -->
+     <div class="partido" style="justify-content:center; border-bottom:none; padding:12px 0;">
+        <span style="font-weight:700; color:#d982df; font-size:1em;">
+        DESCANSA N3 BCN Pareja 5 (G-J)
+        </span>
+     </div>
+    </div>
+  </div>
+
+  <!-- J2 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L7-J2')">JORNADA 02 SEMANA 04/05/2026</div>
+    <div class="partidos-container" id="L7-J2" style="display:none;">
+      <div class="partido" id="L7-P3">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L7-PAR-01">N3 BCN Pareja 1 (A-J)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L7-PAR-03">N3 BCN Pareja 3 (J-C)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L7-P3')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L7-P4">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L7-PAR-02">N3 BCN Pareja 2 (J-S)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L7-PAR-05">N3 BCN Pareja 5 (G-J)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L7-P4')">Guardar</button>
+      </div>
+            <!-- DESCANSO -->
+     <div class="partido" style="justify-content:center; border-bottom:none; padding:12px 0;">
+        <span style="font-weight:700; color:#d982df; font-size:1em;">
+        DESCANSA N3 BCN Pareja 4 (E-J)
+        </span>
+     </div>
+    </div>
+  </div>
+
+  <!-- J3 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L7-J3')">JORNADA 03 SEMANA 11/05/2026</div>
+    <div class="partidos-container" id="L7-J3" style="display:none;">
+      <div class="partido" id="L7-P5">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L7-PAR-01">N3 BCN Pareja 1 (A-J)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L7-PAR-04">N3 BCN Pareja 4 (E-J)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L7-P5')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L7-P6">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L7-PAR-03">N3 BCN Pareja 3 (J-C)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L7-PAR-05">N3 BCN Pareja 5 (G-J)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L7-P6')">Guardar</button>
+      </div>
+     <!-- DESCANSO -->
+     <div class="partido" style="justify-content:center; border-bottom:none; padding:12px 0;">
+        <span style="font-weight:700; color:#d982df; font-size:1em;">
+        DESCANSA N3 BCN Pareja 2 (J-S)
+        </span>
+     </div>
+    </div>
+  </div>
+
+  <!-- J4 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L7-J4')">JORNADA 04 SEMANA 18/05/2026</div>
+    <div class="partidos-container" id="L7-J4" style="display:none;">
+      <div class="partido" id="L7-P7">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L7-PAR-01">N3 BCN Pareja 1 (A-J)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L7-PAR-05">N3 BCN Pareja 5 (G-J)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L7-P7')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L7-P8">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L7-PAR-02">N3 BCN Pareja 2 (J-S)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L7-PAR-04">N3 BCN Pareja 4 (E-J)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L7-P8')">Guardar</button>
+      </div>
+           <!-- DESCANSO -->
+     <div class="partido" style="justify-content:center; border-bottom:none; padding:12px 0;">
+        <span style="font-weight:700; color:#d982df; font-size:1em;">
+        DESCANSA N3 BCN Pareja 3 (J-C)
+        </span>
+     </div>
+    </div>
+  </div>
+  
+  <!-- J5 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L7-J5')">JORNADA 05 SEMANA 25/05/2026</div>
+    <div class="partidos-container" id="L7-J5" style="display:none;">
+      <div class="partido" id="L7-P9">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L7-PAR-02">N3 BCN Pareja 2 (J-S)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L7-PAR-03">N3 BCN Pareja 3 (J-C)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L7-P9')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L7-P10">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L7-PAR-04">N3 BCN Pareja 4 (E-J)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L7-PAR-05">N3 BCN Pareja 5 (G-J)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L7-P10')">Guardar</button>
+      </div>
+        <!-- DESCANSO -->
+      <div class="partido" style="justify-content:center; border-bottom:none; padding:12px 0;">
+        <span style="font-weight:700; color:#d982df; font-size:1em;">
+        DESCANSA N3 BCN Pareja 1 (A-J)
+        </span> 
+    </div>
+  </div>
+
+    <!-- JORNADA DESCANSO / INFORMACIÓN -->
+  <div class="jornada" style="background:#fafafa;">
+    <div class="fecha-header"
+       style="background:#ffffff; color:#2c3e50; border:1px solid #e6e6e6; cursor:default;">
+      JORNADA DE DESCANSO – RECUPERACIÓN DE PARTIDOS PENDIENTES
+   </div>
+  </div>
+  <!-- J6 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L7-J6')">JORNADA 06 SEMANA 08/06/2026</div>
+    <div class="partidos-container" id="L7-J6" style="display:none;">
+      <div class="partido" id="L7-P11">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L7-PAR-01">N3 BCN Pareja 1 (A-J)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L7-PAR-02">N3 BCN Pareja 2 (J-S)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L7-P11')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L7-P12">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L7-PAR-03">N3 BCN Pareja 3 (J-C)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L7-PAR-04">N3 BCN Pareja 4 (E-J)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L7-P12')">Guardar</button>
+      </div>
+      
+      <!-- DESCANSO -->
+     <div class="partido" style="justify-content:center; border-bottom:none; padding:12px 0;">
+        <span style="font-weight:700; color:#d982df; font-size:1em;">
+        DESCANSA N3 BCN Pareja 5 (G-J)
+        </span>
+     </div>
+    </div>
+  </div>
+
+  <!-- J7 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L7-J7')">JORNADA 07 SEMANA 15/06/2026</div>
+    <div class="partidos-container" id="L7-J7" style="display:none;">
+      <div class="partido" id="L7-P13">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L7-PAR-01">N3 BCN Pareja 1 (A-J)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L7-PAR-03">N3 BCN Pareja 3 (J-C)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L7-P3')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L7-P14">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L7-PAR-02">N3 BCN Pareja 2 (J-S)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L7-PAR-05">N3 BCN Pareja 5 (G-J)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L7-P14')">Guardar</button>
+      </div>
+            <!-- DESCANSO -->
+     <div class="partido" style="justify-content:center; border-bottom:none; padding:12px 0;">
+        <span style="font-weight:700; color:#d982df; font-size:1em;">
+        DESCANSA N3 BCN Pareja 4 (E-J)
+        </span>
+     </div>
+    </div>
+  </div>
+
+  <!-- J8 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L7-J8')">JORNADA 08 SEMANA 22/06/2026</div>
+    <div class="partidos-container" id="L7-J8" style="display:none;">
+      <div class="partido" id="L7-P15">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L7-PAR-01">N3 BCN Pareja 1 (A-J)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L7-PAR-04">N3 BCN Pareja 4 (E-J)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L7-P15')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L7-P16">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L7-PAR-03">N3 BCN Pareja 3 (J-C)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L7-PAR-05">N3 BCN Pareja 5 (G-J)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L7-P16')">Guardar</button>
+      </div>
+     <!-- DESCANSO -->
+     <div class="partido" style="justify-content:center; border-bottom:none; padding:12px 0;">
+        <span style="font-weight:700; color:#d982df; font-size:1em;">
+        DESCANSA N3 BCN Pareja 2 (J-S)
+        </span>
+     </div>
+    </div>
+  </div>
+
+  <!-- J9 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L7-J9')">JORNADA 09 SEMANA 2  29/06/2026</div>
+    <div class="partidos-container" id="L7-J9" style="display:none;">
+      <div class="partido" id="L7-P17">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L7-PAR-01">N3 BCN Pareja 1 (A-J)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L7-PAR-05">N3 BCN Pareja 5 (G-J)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L7-P17')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L7-P18">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L7-PAR-02">N3 BCN Pareja 2 (J-S)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L7-PAR-04">N3 BCN Pareja 4 (E-J)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L7-P18')">Guardar</button>
+      </div>
+           <!-- DESCANSO -->
+     <div class="partido" style="justify-content:center; border-bottom:none; padding:12px 0;">
+        <span style="font-weight:700; color:#d982df; font-size:1em;">
+        DESCANSA N3 BCN Pareja 3 (J-C)
+        </span>
+     </div>
+    </div>
+  </div>
+  
+  <!-- J10 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L7-J10')">JORNADA 10 SEMANA 30/06/2026</div>
+    <div class="partidos-container" id="L7-J10" style="display:none;">
+      <div class="partido" id="L7-P19">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L7-PAR-02">N3 BCN Pareja 2 (J-S)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L7-PAR-03">N3 BCN Pareja 3 (J-C)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L7-P19')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L7-P20">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L7-PAR-04">N3 BCN Pareja 4 (E-J)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L7-PAR-05">N3 BCN Pareja 5 (G-J)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L7-P20')">Guardar</button>
+      </div>
+        <!-- DESCANSO -->
+      <div class="partido" style="justify-content:center; border-bottom:none; padding:12px 0;">
+        <span style="font-weight:700; color:#d982df; font-size:1em;">
+        DESCANSA N3 BCN Pareja 1 (A-J)
+        </span> 
+      </div>
+    </div>
+  </div>
+    <div class="clasificacion-container"><h3 style="text-align:center; color:#2c3e50; margin-bottom:10px">Tabla de Clasificación</h3><table class="tabla-clasificacion"><thead><tr style="background:#e74c3c; color:black"><th>Pos</th><th>Pareja</th><th>PJ</th><th>PG</th><th>PE</th><th>PP</th><th>Puntos</th></tr></thead><tbody id="cuerpo-tabla-liga07"></tbody></table><p style="text-align:center; margin-top:12px"><button onclick="generarClasificacion('liga07')" class="btn-guardar" style="width:auto; background:#3498db">Recalcular Clasificación</button></p></div>    
+  </div>
+  </div>
+  <!-- LIGA 08 -->
+  <div id="liga08" class="liga-section">
+    <h2 class="section-title">Nivel 4 Barcelonès</h2>
+    
+  <!-- J1 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L8-J1')">JORNADA 01 SEMANA 27/04/2026</div>
+    <div class="partidos-container" id="L8-J1" style="display:none;">
+      <div class="partido" id="L8-P1">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L8-PAR-01">N4 BCN Pareja 1 (J-X)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L8-PAR-02">N4 BCN Pareja 2 (S-S)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L8-P1')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L8-P2">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L8-PAR-03">N4 BCN Pareja 3 (J-R)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L8-PAR-04">N4 BCN Pareja 4 (B-D)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L8-P2')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- J2 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L8-J2')">JORNADA 02 SEMANA 04/05/2026</div>
+    <div class="partidos-container" id="L8-J2" style="display:none;">
+      <div class="partido" id="L8-P3">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L8-PAR-01">N4 BCN Pareja 1 (J-X)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L8-PAR-03">N4 BCN Pareja 3 (J-R)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L8-P3')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L8-P4">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L8-PAR-02">N4 BCN Pareja 2 (S-S)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L8-PAR-04">N4 BCN Pareja 4 (B-D)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L8-P4')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- J3 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L8-J3')">JORNADA 03 SEMANA 11/05/2026</div>
+    <div class="partidos-container" id="L8-J3" style="display:none;">
+      <div class="partido" id="L8-P5">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L8-PAR-01">N4 BCN Pareja 1 (J-X)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L8-PAR-04">N4 BCN Pareja 4 (B-D)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L8-P5')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L8-P6">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L8-PAR-02">N4 BCN Pareja 2 (S-S)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L8-PAR-03">N4 BCN Pareja 3 (J-R)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L8-P6')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JORNADA DESCANSO / INFORMACIÓN -->
+  <div class="jornada" style="background:#fafafa;">
+    <div class="fecha-header"
+       style="background:#ffffff; color:#2c3e50; border:1px solid #e6e6e6; cursor:default;">
+      JORNADA DE DESCANSO – RECUPERACIÓN DE PARTIDOS PENDIENTES
+   </div>
+  </div>
+
+  <!-- J4 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L8-J4')">JORNADA 04 SEMANA 25/05/2026</div>
+    <div class="partidos-container" id="L8-J4" style="display:none;">
+      <div class="partido" id="L8-P7">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L8-PAR-01">N4 BCN Pareja 1 (J-X)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L8-PAR-02">N4 BCN Pareja 2 (S-S)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L8-P7')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L8-P8">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L8-PAR-03">N4 BCN Pareja 3 (J-R)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L8-PAR-04">N4 BCN Pareja 4 (B-D)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L8-P8')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- J5 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L8-J5')">JORNADA 05 SEMANA 01/06/2026</div>
+    <div class="partidos-container" id="L8-J5" style="display:none;">
+      <div class="partido" id="L8-P9">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L8-PAR-01">N4 BCN Pareja 1 (J-X)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L8-PAR-03">N4 BCN Pareja 3 (J-R)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L8-P9')">Guardar</button>
+      </div>
+
+      <div class="partido" id="L8-P10">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L8-PAR-02">N4 BCN Pareja 2 (S-S)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L8-PAR-04">N4 BCN Pareja 4 (B-D)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L8-P10')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- J6 -->
+  <div class="jornada">
+    <div class="fecha-header" onclick="toggleJornada('L8-J6')">JORNADA 06 SEMANA 08/06/2026</div>
+    <div class="partidos-container" id="L8-J6" style="display:none;">
+      <div class="partido" id="L8-P11">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div>
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L8-PAR-01">N4 BCN Pareja 1 (J-X)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L8-PAR-04">N4 BCN Pareja 4 (B-D)</span>
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L8-P11')">Guardar</button>
+        </div>
+      <div class="partido" id="L8-P12">
+        <div class="marcador">
+          <div class="set"><label>S1</label><input type="number" class="p1-s1" min="0" step="1"><input type="number" class="p2-s1" min="0" step="1"></div>
+          <div class="set"><label>S2</label><input type="number" class="p1-s2" min="0" step="1"><input type="number" class="p2-s2" min="0" step="1"></div>
+          <div class="set"><label>S3</label><input type="number" class="p1-s3" min="0" step="1"><input type="number" class="p2-s3" min="0" step="1"></div> 
+        </div>
+        <div class="nombres">
+          <span class="nombre1" data-pairid="L8-PAR-02">N4 BCN Pareja 2 (S-S)</span>
+          <span class="vs">vs</span>
+          <span class="nombre2" data-pairid="L8-PAR-03">N4 BCN Pareja 3 (J-R)</span> 
+        </div>
+        <button class="btn-guardar" onclick="guardarPartido('L8-P12')">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+    <div class="clasificacion-container"><h3 style="text-align:center; color:#2c3e50; margin-bottom:10px">Tabla de Clasificación</h3><table class="tabla-clasificacion"><thead><tr style="background:#e74c3c; color:black"><th>Pos</th><th>Pareja</th><th>PJ</th><th>PG</th><th>PE</th><th>PP</th><th>Puntos</th></tr></thead><tbody id="cuerpo-tabla-liga08"></tbody></table><p style="text-align:center; margin-top:12px"><button onclick="generarClasificacion('liga08')" class="btn-guardar" style="width:auto; background:#3498db">Recalcular Clasificación</button></p></div>    
+  </div>
+  
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js">
+ if(!pop.contains(e.target) && e.target!==calInputActual) pop.classList.add('oculto'); });
+
+</script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+  <script>
+    // Firebase
+    const firebaseConfig={apiKey:"AIzaSyAaz73HJ8uR33URu8sFWG_hImi02lqLIFA",authDomain:"padelc-62f4e.firebaseapp.com",databaseURL:"https://padelc-62f4e-default-rtdb.europe-west1.firebasedatabase.app",projectId:"padelc-62f4e",storageBucket:"padelc-62f4e.firebasestorage.app",messagingSenderId:"270971476770",appId:"1:270971476770:web:4e4b0f263884cfce56e37b"};
+    firebase.initializeApp(firebaseConfig);
+    const database=firebase.database();
+
+      // Helpers de posiciones densas y estilos
+    function asignarPosicionesDensas(items,key){let pos=0,last=null;items.forEach(it=>{const pts=Number(it[key]);if(last===null||pts!==last){pos+=1;last=pts;}it.posicion=pos;});return items;}
+    function medallaPorPos(p){ if(p===1) return '🥇'; if(p===2) return '🥈'; if(p===3) return '🥉'; return ''; }
+    function estiloFilaPorPos(p){ if(p===1) return 'background:linear-gradient(90deg,#f1c40f,#f39c12);color:#fff;font-weight:800;'; if(p===2) return 'background:linear-gradient(90deg,#95a5a6,#7f8c8d);color:#fff;font-weight:800;'; if(p===3) return 'background:linear-gradient(90deg,#cd7f32,#b8860b);color:#fff;font-weight:800;'; return ''; }
+
+    // Guardado de un partido
+    function guardarPartido(id){
+      const c=document.getElementById(id); if(!c) return;
+      const d={
+        p1:{ s1:(c.querySelector('.p1-s1')||{}).value, s2:(c.querySelector('.p1-s2')||{}).value, s3:(c.querySelector('.p1-s3')||{}).value },
+        p2:{ s1:(c.querySelector('.p2-s1')||{}).value, s2:(c.querySelector('.p2-s2')||{}).value, s3:(c.querySelector('.p2-s3')||{}).value }
+      };
+      const n1=c.querySelector('.nombre1'); const n2=c.querySelector('.nombre2');
+      let s1=0,s2=0; for(let i=1;i<=3;i++){ const v1=parseInt(d.p1['s'+i])||0; const v2=parseInt(d.p2['s'+i])||0; if(v1>v2)s1++; else if(v2>v1)s2++; }
+      if(n1) n1.classList.remove('ganador'); if(n2) n2.classList.remove('ganador');
+      if(s1>=2 && n1) n1.classList.add('ganador'); else if(s2>=2 && n2) n2.classList.add('ganador');
+      database.ref('resultados/'+id).set(d)
+        .then(()=>{ const sec=c.closest('.liga-section'); if(sec && sec.id!=='ranking-global') setTimeout(()=>generarClasificacion(sec.id),350); })
+        .catch(e=>alert('❌ Error: '+e.message));
+    }
+// Clasificación dinámica (por ID de pareja en data-pairid)
+    function generarClasificacion(ligaId) {
+      // ELIMINADO EL BLOQUEO DE LIGA01 Y LIGA02 PARA QUE FUNCIONEN
+      const root = document.getElementById(ligaId); 
+      if (!root) return;
+      
+      const partidos = root.querySelectorAll('.partido');
+      const est = {}; // key = pairId (ej: L1-PAR-01)
+
+      partidos.forEach(p => {
+        const a = p.querySelector('.nombre1'), b = p.querySelector('.nombre2'); 
+        if (!a || !b) return;
+        
+        const pair1Id = (a.dataset.pairid || '').trim();
+        const pair2Id = (b.dataset.pairid || '').trim();
+        if (!pair1Id || !pair2Id) return;
+
+        // Nombre visible actual (ej: N1 BLL Pareja 3 (C-M))
+        const name1 = a.innerText.trim();
+        const name2 = b.innerText.trim();
+
+        if (!est[pair1Id]) est[pair1Id] = { pj: 0, pg: 0, pe: 0, pp: 0, puntos: 0, nombre: name1 };
+        if (!est[pair2Id]) est[pair2Id] = { pj: 0, pg: 0, pe: 0, pp: 0, puntos: 0, nombre: name2 };
+
+        let sp1 = 0, sp2 = 0, comp = 0;
+        for (let i = 1; i <= 3; i++) {
+          const e1 = p.querySelector('.p1-s' + i), e2 = p.querySelector('.p2-s' + i);
+          const v1 = e1 ? parseInt(e1.value, 10) : NaN, v2 = e2 ? parseInt(e2.value, 10) : NaN;
+          if (!isNaN(v1) && !isNaN(v2)) { 
+            comp++; 
+            if (v1 > v2) sp1++; else if (v2 > v1) sp2++; 
+          }
+        }
+        
+        if (comp > 0) {
+          est[pair1Id].pj++; est[pair2Id].pj++;
+          if (sp1 > sp2) { 
+             // Victoria de la pareja 1
+            est[pair1Id].pg++;
+            est[pair1Id].puntos += 2; // 2 puntos por victoria
+            est[pair2Id].pp++; 
+            est[pair2Id].puntos += 1; // 1 punto por derrota
+          } else if (sp2 > sp1) { 
+            // Victoria de la pareja 2
+            est[pair2Id].pg++;
+            est[pair2Id].puntos += 2; // 2 puntos por victoria
+            est[pair1Id].pp++; 
+            est[pair1Id].puntos += 1; // 1 punto por derrota            
+          } else { 
+            // Empate
+            est[pair1Id].pe++;
+            est[pair2Id].pe++; 
+            est[pair1Id].puntos += 1.5; // 1.5 puntos por empate
+            est[pair2Id].puntos += 1.5; // 1.5 puntos por empate 
+          }
+        }
+      });
+
+      const ranking = Object.keys(est).map(id => ({ pairId: id, ...est[id] })).sort((x, y) => {
+        if (y.puntos !== x.puntos) return y.puntos - x.puntos;
+        if (y.pg !== x.pg) return y.pg - x.pg;
+        const da = x.pg - x.pp, db = y.pg - y.pp; 
+        return db - da;
+      });
+      
+      asignarPosicionesDensas(ranking, 'puntos');
+
+      // Pintar en la tabla correspondiente
+      const tb = document.getElementById('cuerpo-tabla-' + ligaId);
+      if (tb) {
+        tb.innerHTML = '';
+        ranking.forEach(p => {
+          const tr = tb.insertRow(); 
+          const pos = p.posicion, med = medallaPorPos(pos);
+          tr.style.cssText = estiloFilaPorPos(pos);
+          tr.innerHTML = `<td class="posicion">${pos} ${med}</td>
+                          <td style="padding:10px;font-weight:800;">${p.nombre}</td>
+                          <td>${p.pj}</td><td>${p.pg}</td><td>${p.pe}</td><td>${p.pp}</td>
+                          <td style="font-weight:800">${p.puntos}</td>`;
+        });
+      }
+
+      // Guardar de forma persistente en Firebase por pairId
+      const save = {}; 
+      ranking.forEach(p => save[p.pairId] = { nombre: p.nombre, pj: p.pj, pg: p.pg, pe: p.pe, pp: p.pp, puntos: p.puntos });
+      database.ref('clasificacion/' + ligaId).set(save).catch(() => {});
+    }
+
+    // Carga clasificación dinámica para todas las ligas
+    function cargarClasificacion(ligaId) {
+      // ELIMINADO EL BLOQUEO ESTATICO DE LIGA01
+      const tb = document.getElementById('cuerpo-tabla-' + ligaId); 
+      if (!tb) return; 
+      
+      tb.innerHTML = '';
+      database.ref('clasificacion/' + ligaId).once('value').then(s => {
+        const data = s.val(); 
+        if (!data) return;
+        
+        const ranking = Object.keys(data).map(pairId => {
+          const it = data[pairId];
+          return { pairId, nombre: it.nombre, pj: it.pj, pg: it.pg, pe: it.pe, pp: it.pp, puntos: it.puntos };
+        }).sort((x, y) => {
+          if (y.puntos !== x.puntos) return y.puntos - x.puntos;
+          if (y.pg !== x.pg) return y.pg - x.pg;
+          const da = x.pg - x.pp, db = y.pg - y.pp; 
+          return db - da;
+        });
+
+        asignarPosicionesDensas(ranking, 'puntos');
+        
+        ranking.forEach(p => {
+          const tr = tb.insertRow(); 
+          const pos = p.posicion, med = medallaPorPos(pos);
+          tr.style.cssText = estiloFilaPorPos(pos);
+          tr.innerHTML = `<td class="posicion">${pos} ${med}</td>
+                          <td style="padding:10px;font-weight:800;">${p.nombre}</td>
+                          <td>${p.pj}</td><td>${p.pg}</td><td>${p.pe}</td><td>${p.pp}</td>
+                          <td style="font-weight:800">${p.puntos}</td>`;
+        });
+      }).catch(() => {});
+    }
+
+
+    function pintarEstatico(tbodyId, data){
+      const tb=document.getElementById(tbodyId); if(!tb) return; tb.innerHTML='';
+      const filas=data.map(x=>({...x,puntos:x.pto}));
+      asignarPosicionesDensas(filas,'puntos');
+      filas.forEach(p=>{
+        const tr=tb.insertRow(); const pos=p.posicion, med=medallaPorPos(pos);
+        tr.style.cssText=estiloFilaPorPos(pos);
+        tr.innerHTML=`<td class="posicion">${pos} ${med}</td><td style="padding:10px;font-weight:800;">${p.nombre}</td><td>${p.pj}</td><td>${p.pg}</td><td>${p.pe}</td><td>${p.pp}</td><td style="font-weight:800">${p.pto}</td>`;
+      });
+    }
+
+   
+    /* ==========================
+       LISTENER SIN RECÁLCULO
+       ========================== */
+
+    // Solo efecto visual de ganador; no afecta cálculos de ranking
+    function recalcularGanadorVisual(divPartido) {
+      if (!divPartido) return;
+      const n1 = divPartido.querySelector('.nombre1');
+      const n2 = divPartido.querySelector('.nombre2');
+      if (n1) n1.classList.remove('ganador');
+      if (n2) n2.classList.remove('ganador');
+
+      let s1 = 0, s2 = 0;
+      for (let i = 1; i <= 3; i++) {
+        const e1 = divPartido.querySelector('.p1-s' + i);
+        const e2 = divPartido.querySelector('.p2-s' + i);
+        const v1 = e1 ? parseInt(e1.value, 10) : NaN;
+        const v2 = e2 ? parseInt(e2.value, 10) : NaN;
+        if (!isNaN(v1) && !isNaN(v2)) {
+          if (v1 > v2) s1++;
+          else if (v2 > v1) s2++;
+        }
+      }
+      if (s1 >= 2 && n1) n1.classList.add('ganador');
+      else if (s2 >= 2 && n2) n2.classList.add('ganador');
+    }
+
+    // Live load de resultados guardados (SIN recalcular clasificaciones)
+    database.ref('resultados/').on('value', snap => {
+      const data = snap.val();
+      if (!data) return;
+
+      Object.keys(data).forEach(id => {
+        const div = document.getElementById(id);
+        if (!div) return;
+
+        const p1 = data[id].p1 || {};
+        const p2 = data[id].p2 || {};
+
+        const q = sel => div.querySelector(sel);
+        // Más robusto que val || '' (conserva 0, trata null/undefined como vacío)
+        const setVal = (el, val) => { if (el) el.value = (val ?? '') === null ? '' : String(val ?? ''); };
+
+        // Rellena inputs desde Firebase
+        setVal(q('.p1-s1'), p1.s1);
+        setVal(q('.p1-s2'), p1.s2);
+        setVal(q('.p1-s3'), p1.s3);
+        setVal(q('.p2-s1'), p2.s1);
+        setVal(q('.p2-s2'), p2.s2);
+        setVal(q('.p2-s3'), p2.s3);
+
+        // Solo efecto visual del ganador
+        recalcularGanadorVisual(div);
+      });
+    });
+
+// UI
+function toggleJornada(id){
+  const el=document.getElementById(id);
+  if(!el) return;
+  el.style.display=(el.style.display==='none'||el.style.display==='')?'block':'none';
+}
+
+function cambiarLiga(id,btn){
+  document.querySelectorAll('.liga-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.btn-liga').forEach(b=>b.classList.remove('active'));
+  const el=document.getElementById(id); if(el) el.classList.add('active');
+  if(btn) btn.classList.add('active');
+  if(id==='ranking-global') { generarRankingIndividual(); } else { cargarClasificacion(id); }
+}
+
+/* ==========================================================
+   AUTO-ABRIR LA LIGA/JORNADA MÁS CERCANA A LA FECHA ACTUAL
+   ========================================================== */
+
+// Mapa de meses ES -> índice 0..11 (incluye 'SETIEMBRE')
+const ES_MESES = {
+  "ENERO":0,"FEBRERO":1,"MARZO":2,"ABRIL":3,"MAYO":4,"JUNIO":5,
+  "JULIO":6,"AGOSTO":7,"SEPTIEMBRE":8,"SETIEMBRE":8,
+  "OCTUBRE":9,"NOVIEMBRE":10,"DICIEMBRE":11
+};
+
+// "DD DE MES AAAA" (p. ej. "12 DE NOVIEMBRE 2025").
+// Tolera "29 y 10 y 2025" -> normaliza " y " a " DE ".
+function parseFechaEsConMesNombre(texto) {
+  if (!texto) return null;
+  const t = texto.trim().toUpperCase().replace(/\s+/g,' ');
+  const norm = t.replace(/\s+y\s+/g, ' DE ');
+  const m = norm.match(/^(\d{1,2})\s*DE\s*([A-ZÁÉÍÓÚÜ]+)\s*(\d{4})$/);
+  if (!m) return null;
+  const dd = parseInt(m[1],10);
+  let mesTxt = m[2].normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  if (mesTxt === 'SETIEMBRE') mesTxt = 'SEPTIEMBRE';
+  const mm = ES_MESES[mesTxt];
+  const yyyy = parseInt(m[3],10);
+  if (isNaN(dd) || typeof mm !== 'number' || isNaN(yyyy)) return null;
+  const d = new Date(yyyy, mm, dd);
+  if (isNaN(d.getTime())) return null;
+  d.setHours(0,0,0,0);
+  return d;
+}
+
+// "DD/MM/AAAA" (p. ej. "29/10/2025").
+function parseFechaEsConBarras(texto) {
+  if (!texto) return null;
+  const m = texto.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (!m) return null;
+  const dd = parseInt(m[1],10);
+  const mm = parseInt(m[2],10) - 1; // 0..11
+  const yyyy = parseInt(m[3],10);
+  const d = new Date(yyyy, mm, dd);
+  if (isNaN(d.getTime())) return null;
+  d.setHours(0,0,0,0);
+  return d;
+}
+
+// Parser combinado
+function parseFechaJornada(texto) {
+  return parseFechaEsConMesNombre(texto) || parseFechaEsConBarras(texto) || null;
+}
+
+// Recolecta todas las jornadas de todas las ligas (excepto ranking-global)
+function recolectarJornadas() {
+  const jornadas = [];
+  document.querySelectorAll('.liga-section').forEach(ligaSec => {
+    if (ligaSec.id === 'ranking-global') return;
+    const ligaId = ligaSec.id;
+    ligaSec.querySelectorAll('.fecha-header').forEach(header => {
+      const texto = header.textContent || header.innerText || '';
+      const fecha = parseFechaJornada(texto);
+      if (!fecha) return;
+
+      // Localiza su contenedor .partidos-container
+      let cont = null;
+      const onclk = header.getAttribute('onclick') || '';
+      const mm = onclk.match(/toggleJornada\('([^']+)'\)/);
+      if (mm && mm[1]) cont = document.getElementById(mm[1]);
+      if (!cont) {
+        const sib = header.nextElementSibling;
+        if (sib?.classList?.contains('partidos-container')) cont = sib;
+      }
+      if (!cont) return;
+
+      jornadas.push({ ligaId, headerEl: header, contenedorEl: cont, date: fecha });
+    });
+  });
+  return jornadas;
+}
+
+function setActiveLiga(ligaId) {
+  const btn = Array.from(document.querySelectorAll('.btn-liga'))
+    .find(b => (b.getAttribute('onclick') || '').includes(ligaId));
+  cambiarLiga(ligaId, btn);
+}
+
+function abrirJornada(j) {
+  if (!j || !j.contenedorEl) return;
+  j.contenedorEl.style.display = 'block';
+  // Si quieres scroll automático: descomenta
+  // j.headerEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Selecciona la futura más cercana; si no hay futuras, la última pasada
+function seleccionarJornadaCercana() {
+  const jornadas = recolectarJornadas();
+  if (!jornadas.length) return;
+
+  const today = new Date(); today.setHours(0,0,0,0);
+  const futuras = jornadas.filter(j => j.date >= today).sort((a,b)=>a.date-b.date);
+  const pasadas = jornadas.filter(j => j.date <  today).sort((a,b)=>a.date-b.date);
+
+  const target = futuras[0] || pasadas[pasadas.length-1] || null;
+  if (!target) return;
+
+  setActiveLiga(target.ligaId);
+  abrirJornada(target);
+}
+
+function initOpenNearestJornada() {
+  try { seleccionarJornadaCercana(); }
+  catch(e){ console.warn('Auto-jornada:', e); }
+}
+
+// Mantiene tu flujo actual y, al final, abre automáticamente la liga/jornada más cercana
+document.addEventListener('DOMContentLoaded', ()=>{
+  const act=document.querySelector('.liga-section.active');
+  if(act){
+    const id=act.id;
+    document.querySelectorAll('.btn-liga').forEach(b=>{
+      if(b.getAttribute('onclick') && b.getAttribute('onclick').includes(id)) b.classList.add('active');
+    });
+    if(id!=='ranking-global') cargarClasificacion(id);
+  }
+  // ➜ Integración: abre automáticamente la liga/jornada más cercana a "hoy"
+  initOpenNearestJornada();
+});
+  
+// Calendar functions
+let calInputActual = null;
+let calFecha = new Date();
+function abrirCalendario(input){ calInputActual=input; const pop=document.getElementById('calendario-popup'); const r=input.getBoundingClientRect(); pop.style.top=(r.bottom+window.scrollY+5)+"px"; pop.style.left=(r.left+window.scrollX)+"px"; generarCalendario(); pop.classList.remove('oculto'); }
+function generarCalendario(){ const pop=document.getElementById('calendario-popup'); let m=calFecha.getMonth(); let y=calFecha.getFullYear(); const p1=new Date(y,m,1).getDay(); const last=new Date(y,m+1,0).getDate(); let html=`<div class="cal-nav"><button onclick="calPrevMes()">◀</button><span>${m+1}-${y}</span><button onclick="calNextMes()">▶</button></div><div class="cal-dias"><div>L</div><div>M</div><div>X</div><div>J</div><div>V</div><div>S</div><div>D</div>`; let off=(p1+6)%7; for(let i=0;i<off;i++) html+="<div></div>"; for(let d=1; d<=last; d++){ html+=`<div class="cal-dia" onclick="seleccionarDia(${d})">${d}</div>`;} html+="</div>"; pop.innerHTML=html; }
+function seleccionarDia(d){ let dd=String(d).padStart(2,'0'); let mm=String(calFecha.getMonth()+1).padStart(2,'0'); let y=calFecha.getFullYear(); if(calInputActual) calInputActual.value=`${dd}-${mm}-${y}`; document.getElementById('calendario-popup').classList.add('oculto'); }
+function calPrevMes(){ calFecha.setMonth(calFecha.getMonth()-1); generarCalendario(); }
+function calNextMes(){ calFecha.setMonth(calFecha.getMonth()+1); generarCalendario(); }
+document.addEventListener('click',e=>{ const pop=document.getElementById('calendario-popup'); if(!pop.contains(e.target) && e.target!==calInputActual) pop.classList.add('oculto'); });
+</script>
+
+<div id="calendario-popup" class="calendario-popup oculto"></div>
+
+</body>
+</html>
