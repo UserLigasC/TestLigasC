@@ -87,7 +87,7 @@
   <div class="selector-ligas">
     <button class="btn-liga" onclick="cambiarLiga('liga01', this)">N1 BLL</button>
     <button class="btn-liga" onclick="cambiarLiga('liga02', this)">N1 BCN</button>
-    <button class="btn-liga active" onclick="cambiarLiga('liga03', this)">N2 BLL</button>
+    <button class="btn-liga" onclick="cambiarLiga('liga03', this)">N2 BLL</button>
     <button class="btn-liga" onclick="cambiarLiga('liga04', this)">N2A BCN</button>
     <button class="btn-liga" onclick="cambiarLiga('liga05', this)">N2B BCN</button>
     <button class="btn-liga" onclick="cambiarLiga('liga06', this)">N3 BLL</button>
@@ -2091,18 +2091,49 @@
     // Guardado de un partido
     function guardarPartido(id){
       const c=document.getElementById(id); if(!c) return;
-      const d={
-        p1:{ s1:(c.querySelector('.p1-s1')||{}).value, s2:(c.querySelector('.p1-s2')||{}).value, s3:(c.querySelector('.p1-s3')||{}).value },
-        p2:{ s1:(c.querySelector('.p2-s1')||{}).value, s2:(c.querySelector('.p2-s2')||{}).value, s3:(c.querySelector('.p2-s3')||{}).value }
+      
+      // Obtener sets del formulario
+      const d = {
+        p1: {
+          s1: (c.querySelector('.p1-s1') ?? {}).value,
+          s2: (c.querySelector('.p1-s2') ?? {}).value,
+          s3: (c.querySelector('.p1-s3') ?? {}).value
+        },
+        p2: {
+          s1: (c.querySelector('.p2-s1') ?? {}).value,
+          s2: (c.querySelector('.p2-s2') ?? {}).value,
+          s3: (c.querySelector('.p2-s3') ?? {}).value
+        }
       };
-      const n1=c.querySelector('.nombre1'); const n2=c.querySelector('.nombre2');
-      let s1=0,s2=0; for(let i=1;i<=3;i++){ const v1=parseInt(d.p1['s'+i])||0; const v2=parseInt(d.p2['s'+i])||0; if(v1>v2)s1++; else if(v2>v1)s2++; }
-      if(n1) n1.classList.remove('ganador'); if(n2) n2.classList.remove('ganador');
-      if(s1>=2 && n1) n1.classList.add('ganador'); else if(s2>=2 && n2) n2.classList.add('ganador');
-      database.ref('resultados/'+id).set(d)
-        .then(()=>{ const sec=c.closest('.liga-section'); if(sec && sec.id!=='ranking-global') setTimeout(()=>generarClasificacion(sec.id),350); })
-        .catch(e=>alert('❌ Error: '+e.message));
-    }
+
+      // Calcular ganador visual
+      const n1 = c.querySelector('.nombre1');
+      const n2 = c.querySelector('.nombre2');
+      let s1 = 0, s2 = 0;
+
+      for (let i = 1; i <= 3; i++) {
+        const v1 = parseInt(d.p1['s' + i]) || 0;
+        const v2 = parseInt(d.p2['s' + i]) || 0;
+        if (v1 > v2) s1++;
+        else if (v2 > v1) s2++;
+      }
+
+      if (n1) n1.classList.remove('ganador');
+      if (n2) n2.classList.remove('ganador');
+      if (s1 >= 2 && n1) n1.classList.add('ganador');
+      else if (s2 >= 2 && n2) n2.classList.add('ganador');
+
+      // ✅ MUY IMPORTANTE: actualizar solo sets y nunca borrar la fecha
+      database.ref('resultados/' + id).update(d)
+        .then(() => {
+          const sec = c.closest('.liga-section');
+          if (sec && sec.id !== 'ranking-global') {
+            setTimeout(() => generarClasificacion(sec.id), 350);
+          }
+        })
+        .catch(e => alert('❌ Error: ' + e.message));
+}
+
     function guardarFecha(id){
       const c = document.getElementById(id);
       if (!c) return;
@@ -2490,8 +2521,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // ✅ Crear automáticamente los botones "Guardar Fecha"
   insertarBotonesGuardarFecha();
 
-  // ✅ Jornada más cercana
-  initOpenNearestJornada();
 });
   
 // Calendar functions
