@@ -65,6 +65,12 @@
 .cal-dia { padding: 6px; text-align: center; cursor: pointer; border-radius: 4px; }
 .cal-dia:hover { background: #27ae60; color: white; }
 
+.fecha-guardada {
+  color: #27ae60;
+  font-weight: 600;
+}
+
+
 </style>
 </head>
 <body>
@@ -2110,7 +2116,10 @@
       }
 
       database.ref('resultados/' + id + '/fecha').set(fecha)
-        .then(() => alert("✅ Fecha guardada correctamente"))
+        .then(() => {
+          alert("✅ Fecha guardada correctamente");
+          if (fechaInput) fechaInput.classList.add('fecha-guardada'); // ✅ marcar en verde
+        })
         .catch(e => alert("❌ Error al guardar la fecha: " + e.message));
     }
 // Clasificación dinámica (por ID de pareja en data-pairid)
@@ -2307,10 +2316,23 @@
 
         const p1 = data[id].p1 || {};
         const p2 = data[id].p2 || {};
+        const fecha = data[id].fecha ?? '';
 
         const q = sel => div.querySelector(sel);
         // Más robusto que val || '' (conserva 0, trata null/undefined como vacío)
         const setVal = (el, val) => { if (el) el.value = (val ?? '') === null ? '' : String(val ?? ''); };
+
+        // ✅ Rellenar la fecha
+        setVal(q('.fecha-input'), fecha);        
+        const fechaInput = q('.fecha-input');
+        if (fechaInput) {
+          if (fecha && fecha.trim() !== '') {
+            fechaInput.classList.add('fecha-guardada');   // ✅ marcar en verde
+          } else {
+            fechaInput.classList.remove('fecha-guardada');
+          }
+        }
+
 
         // Rellena inputs desde Firebase
         setVal(q('.p1-s1'), p1.s1);
